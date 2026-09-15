@@ -4,6 +4,8 @@
 
 MockupFX will be an open-source, browser-first platform for designing interactive mockups, reviewing them with stakeholders, and handing them to developers. Its central promise is **portable interactive intent**: a mockup should remain usable as an open project artifact, as a static exported prototype, and as an inspectable handoff surface.
 
+This document defines the MVP product commitment. The complete cross-domain feature inventory and the artifacts required to support each future capability are maintained separately in the [Full Capability Inventory](../inventory/FULL-CAPABILITY-INVENTORY.md), [Archive Coverage Matrix](../inventory/ARCHIVE-COVERAGE-MATRIX.md), and [Supporting Artifact Manifest](../inventory/SUPPORTING-ARTIFACT-MANIFEST.md). No inventory entry is an implementation claim until it meets the [Conformance and Self-Testing](../developer/CONFORMANCE-AND-SELF-TESTING.md) bar.
+
 The project begins with a web application and self-hosted reference deployment. Native desktop applications, a proprietary binary project format, and a mandatory hosted cloud are out of scope for the MVP. The reference capability map is informed by public documentation that separates authoring, browser preview, publication, feedback, inspection, and administration into distinct but connected workflows.[1] [2]
 
 ### Success criteria

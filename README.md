@@ -25,6 +25,10 @@ The complete requirements and acceptance criteria are in [Product Requirements](
 |---|---|
 | [Documentation index](docs/README.md) | Navigation and reading order for the full package |
 | [Product Requirements](docs/product/PRODUCT-REQUIREMENTS.md) | Scope, requirements, acceptance criteria, and non-goals |
+| [Full Capability Inventory](docs/inventory/FULL-CAPABILITY-INVENTORY.md) | Complete feature inventory across authoring, runtime, export, import, sharing, handoff, administration, and operations |
+| [Archive Coverage Matrix](docs/inventory/ARCHIVE-COVERAGE-MATRIX.md) | Traceable reconciliation from the source archive to MockupFX inventory and evidence artifacts |
+| [Supporting Artifact Manifest](docs/inventory/SUPPORTING-ARTIFACT-MANIFEST.md) | Required contracts, modules, fixtures, tests, runbooks, and user guides for supportable features |
+| [Conformance and Self-Testing](docs/developer/CONFORMANCE-AND-SELF-TESTING.md) | Four-level success criteria and continuous validation requirements |
 | [Publishing and Export Formats](docs/product/EXPORT-FORMATS.md) | Interactive web, open JSON, CSV, Word, PDF, Markdown, image, and asset exports |
 | [User Documentation Plan](docs/product/USER-DOCUMENTATION-PLAN.md) | End-user documentation required before releases |
 | [Architecture](docs/architecture/ARCHITECTURE.md) | Target system design, open project format, and trust boundaries |
