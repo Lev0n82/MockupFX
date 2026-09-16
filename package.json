@@ -1,0 +1,29 @@
+{
+  "name": "mockupfx",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Open-source UX prototyping runtime and supporting packages",
+  "license": "MIT",
+  "packageManager": "pnpm@11.24.0",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=11.0.0"
+  },
+  "scripts": {
+    "build": "pnpm --filter @mockupfx/format run build && pnpm --filter @mockupfx/runtime run build && pnpm --filter @mockupfx/test-fixtures run build",
+    "clean": "rm -rf packages/*/dist coverage",
+    "lint": "pnpm typecheck",
+    "self-test": "node scripts/self-test.mjs",
+    "test": "vitest run",
+    "test:format": "vitest run packages/format/tests",
+    "test:runtime": "vitest run packages/runtime/tests",
+    "typecheck": "tsc --noEmit --project tsconfig.json",
+    "validate:docs": "python3 scripts/validate-docs.py"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}

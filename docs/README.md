@@ -13,10 +13,12 @@ This documentation set is the initial source of truth for MockupFX. It defines a
 | 5 | [Conformance and Self-Testing](developer/CONFORMANCE-AND-SELF-TESTING.md) | Defining four-level acceptance criteria and built-in validation for all features |
 | 6 | [Publishing and Export Formats](product/EXPORT-FORMATS.md) | Designing static web, open JSON, CSV, Word, PDF, Markdown, image, or asset outputs |
 | 7 | [Architecture](architecture/ARCHITECTURE.md) | Designing the project model, runtime, backend, API, or export format |
-| 8 | [Implementation Plan](developer/IMPLEMENTATION-PLAN.md) | Starting development, selecting a module, or creating a milestone issue |
-| 9 | [Self-Hosting Guide](operations/SELF-HOSTING.md) | Designing deployment, data protection, administration, or operations |
-| 10 | [User Documentation Plan](product/USER-DOCUMENTATION-PLAN.md) | Writing tutorials, reference pages, onboarding, or release documentation |
-| 11 | [Roadmap](governance/ROADMAP.md) | Understanding phases, dependencies, and the next contribution areas |
+| 8 | [Interactive Preview Player Engine](architecture/INTERACTIVE-PREVIEW-PLAYER-ENGINE.md) | Implementing or reviewing deterministic preview runtime behavior and host boundaries |
+| 9 | [Implementation Plan](developer/IMPLEMENTATION-PLAN.md) | Starting development, selecting a module, or creating a milestone issue |
+| 10 | [Player Engine Implementation Plan](developer/PLAYER-ENGINE-IMPLEMENTATION-PLAN.md) | Reviewing initial monorepo structure, test-first runtime tasks, and verification gates |
+| 11 | [Self-Hosting Guide](operations/SELF-HOSTING.md) | Designing deployment, data protection, administration, or operations |
+| 12 | [User Documentation Plan](product/USER-DOCUMENTATION-PLAN.md) | Writing tutorials, reference pages, onboarding, or release documentation |
+| 13 | [Roadmap](governance/ROADMAP.md) | Understanding phases, dependencies, and the next contribution areas |
 
 Repository-wide policies are available in [Contributing](../CONTRIBUTING.md), [Security](../SECURITY.md), [Governance](../GOVERNANCE.md), and the [Code of Conduct](../CODE_OF_CONDUCT.md).
 

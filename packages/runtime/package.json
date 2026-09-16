@@ -1,0 +1,20 @@
+{
+  "name": "@mockupfx/runtime",
+  "version": "0.1.0",
+  "description": "Deterministic MockupFX interactive preview player engine",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "dependencies": {
+    "@mockupfx/format": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json"
+  }
+}

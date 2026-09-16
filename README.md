@@ -2,7 +2,7 @@
 
 **MockupFX** is a documentation-first, open-source proposal for a browser-based UX prototyping, review, and developer-handoff platform. It is designed to make interactive mockups portable, inspectable, shareable, and self-hostable without requiring a proprietary project format or hosted service.
 
-> **Status:** This repository currently contains the product specification, architecture, governance, and contributor materials required to begin an open-source implementation. It does not yet ship an editor, renderer, hosted service, or production API.
+> **Status:** The repository now includes a tested TypeScript foundation: a project-format validator, a deterministic interactive preview player core, an open reference fixture, and a built-in self-test. It does **not** yet ship an editor, visual renderer, static exporter, hosted service, or production API.
 
 ## Product scope
 
@@ -32,7 +32,9 @@ The complete requirements and acceptance criteria are in [Product Requirements](
 | [Publishing and Export Formats](docs/product/EXPORT-FORMATS.md) | Interactive web, open JSON, CSV, Word, PDF, Markdown, image, and asset exports |
 | [User Documentation Plan](docs/product/USER-DOCUMENTATION-PLAN.md) | End-user documentation required before releases |
 | [Architecture](docs/architecture/ARCHITECTURE.md) | Target system design, open project format, and trust boundaries |
+| [Interactive Preview Player Engine](docs/architecture/INTERACTIVE-PREVIEW-PLAYER-ENGINE.md) | Normative runtime contract for event execution, state, trace, URL state, security, and acceptance criteria |
 | [Implementation Plan](docs/developer/IMPLEMENTATION-PLAN.md) | Module map, milestones, interfaces, and test strategy |
+| [Player Engine Implementation Plan](docs/developer/PLAYER-ENGINE-IMPLEMENTATION-PLAN.md) | Initial monorepo structure, test-first build order, task plan, and verification gates |
 | [Self-Hosting Guide](docs/operations/SELF-HOSTING.md) | Reference operations model, configuration, backup, and upgrades |
 | [Roadmap](docs/governance/ROADMAP.md) | Release sequence and contribution priorities |
 | [Contributing Guide](CONTRIBUTING.md) | Participation, issue, review, and pull-request process |
@@ -45,12 +47,20 @@ MockupFX is licensed under the [MIT License](LICENSE). The planned project forma
 
 The project is **not affiliated with, endorsed by, or a derivative implementation of Axure Software Solutions, Inc.** “Axure” is a trademark of its respective owner and is used here only to identify public reference documentation.
 
-## Getting started with the proposal
+## Development quick start
 
-1. Read the [Product Requirements](docs/product/PRODUCT-REQUIREMENTS.md) to understand the target MVP and explicitly excluded work.
-2. Review the [Architecture](docs/architecture/ARCHITECTURE.md) before proposing an implementation or format change.
-3. Select a scoped work item from the [Roadmap](docs/governance/ROADMAP.md) or open a discussion/issue using the templates.
-4. Follow [Contributing](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md) when participating.
+The initial package set supports Node.js 22 and pnpm 11.
+
+```bash
+pnpm install --frozen-lockfile
+pnpm test
+pnpm typecheck
+pnpm build
+pnpm self-test
+pnpm validate:docs
+```
+
+The self-test executes the open checkout fixture through the compiled `@mockupfx/runtime` package. It verifies a conditional click interaction, variable update, page navigation, FIFO named-event emission, component visibility update, and deterministic trace. Read the [player engine specification](docs/architecture/INTERACTIVE-PREVIEW-PLAYER-ENGINE.md) before contributing runtime behavior. Follow [Contributing](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md) when participating.
 
 ## References
 
