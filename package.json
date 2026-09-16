@@ -11,12 +11,14 @@
     "pnpm": ">=11.0.0"
   },
   "scripts": {
-    "build": "pnpm --filter @mockupfx/format run build && pnpm --filter @mockupfx/runtime run build && pnpm --filter @mockupfx/test-fixtures run build",
+    "build": "pnpm --filter @mockupfx/format run build && pnpm --filter @mockupfx/runtime run build && pnpm --filter @mockupfx/test-fixtures run build && pnpm --filter @mockupfx/renderer run build && pnpm --filter @mockupfx/exporter run build",
     "clean": "rm -rf packages/*/dist coverage",
     "lint": "pnpm typecheck",
     "self-test": "node scripts/self-test.mjs",
     "test": "vitest run",
+    "test:exporter": "vitest run packages/exporter/tests",
     "test:format": "vitest run packages/format/tests",
+    "test:renderer": "vitest run packages/renderer/tests",
     "test:runtime": "vitest run packages/runtime/tests",
     "typecheck": "tsc --noEmit --project tsconfig.json",
     "validate:docs": "python3 scripts/validate-docs.py"

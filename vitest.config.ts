@@ -5,7 +5,9 @@ export default defineConfig({
     alias: {
       '@mockupfx/format': new URL('./packages/format/src/index.ts', import.meta.url).pathname,
       '@mockupfx/runtime': new URL('./packages/runtime/src/index.ts', import.meta.url).pathname,
-      '@mockupfx/test-fixtures': new URL('./packages/test-fixtures/src/index.ts', import.meta.url).pathname
+      '@mockupfx/test-fixtures': new URL('./packages/test-fixtures/src/index.ts', import.meta.url).pathname,
+      '@mockupfx/renderer': new URL('./packages/renderer/src/index.ts', import.meta.url).pathname,
+      '@mockupfx/exporter': new URL('./packages/exporter/src/index.ts', import.meta.url).pathname
     }
   },
   test: {

@@ -23,7 +23,40 @@ export interface Page {
   rootComponentId: string;
 }
 
-export type ComponentType = 'text' | 'button' | 'container' | 'image';
+export type ComponentType =
+  | 'text'
+  | 'button'
+  | 'container'
+  | 'image'
+  | 'dynamicPanel'
+  | 'master'
+  | 'input'
+  | 'checkbox';
+
+export type FontWeight = 'normal' | 'medium' | 'semibold' | 'bold';
+
+export interface ComponentBounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface ComponentStyle {
+  backgroundColor?: string;
+  borderColor?: string;
+  color?: string;
+  borderRadius?: number;
+  fontSize?: number;
+  fontWeight?: FontWeight;
+  padding?: number;
+  textAlign?: 'left' | 'center' | 'right';
+}
+
+export interface PanelState {
+  id: string;
+  name: string;
+}
 
 export interface Component {
   id: string;
@@ -31,6 +64,16 @@ export interface Component {
   type: ComponentType;
   text?: string;
   visible?: boolean;
+  name?: string;
+  parentComponentId?: string;
+  panelStateId?: string;
+  panelStates?: PanelState[];
+  initialPanelStateId?: string;
+  bounds?: ComponentBounds;
+  style?: ComponentStyle;
+  ariaLabel?: string;
+  altText?: string;
+  value?: string;
 }
 
 export interface Variable {
@@ -71,7 +114,7 @@ export interface VariableIsTruthyCondition {
   variableId: string;
 }
 
-export type Action = NavigateAction | SetVariableAction | SetTextAction | SetVisibilityAction | EmitAction;
+export type Action = NavigateAction | SetVariableAction | SetTextAction | SetVisibilityAction | SetPanelStateAction | EmitAction;
 
 export interface NavigateAction {
   id: string;
@@ -99,6 +142,13 @@ export interface SetVisibilityAction {
   type: 'setVisibility';
   componentId: string;
   visible: boolean;
+}
+
+export interface SetPanelStateAction {
+  id: string;
+  type: 'setPanelState';
+  componentId: string;
+  stateId: string;
 }
 
 export interface EmitAction {

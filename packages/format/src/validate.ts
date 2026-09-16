@@ -4,17 +4,23 @@ import type {
   Action,
   Branch,
   Component,
+  ComponentBounds,
+  ComponentStyle,
   Condition,
   Interaction,
   Page,
+  PanelState,
   ProjectDocument,
   Variable,
   VariableType,
   VariableValue
 } from './types.js';
 
-const componentTypes = new Set(['text', 'button', 'container', 'image']);
+const componentTypes = new Set(['text', 'button', 'container', 'image', 'dynamicPanel', 'master', 'input', 'checkbox']);
 const variableTypes = new Set<VariableType>(['string', 'number', 'boolean']);
+const styleKeys = new Set(['backgroundColor', 'borderColor', 'color', 'borderRadius', 'fontSize', 'fontWeight', 'padding', 'textAlign']);
+const fontWeights = new Set(['normal', 'medium', 'semibold', 'bold']);
+const textAlignments = new Set(['left', 'center', 'right']);
 
 export function validateProject(input: unknown): ProjectDocument {
   const document = recordAt(input, '');
@@ -32,6 +38,7 @@ export function validateProject(input: unknown): ProjectDocument {
 
   const pageIds = new Set(pages.map((page) => page.id));
   const componentIds = new Set(components.map((component) => component.id));
+  const componentById = new Map(components.map((component) => [component.id, component]));
   const variableById = new Map(variables.map((variable) => [variable.id, variable]));
 
   if (!pageIds.has(project.startPageId as string)) {
@@ -44,15 +51,11 @@ export function validateProject(input: unknown): ProjectDocument {
     }
   }
 
-  for (const [index, component] of components.entries()) {
-    if (!pageIds.has(component.pageId)) {
-      fail('FORMAT_UNKNOWN_PAGE', `/components/${index}/pageId`, `Component page '${component.pageId}' does not exist.`);
-    }
-  }
+  validateComponentRelationships(components, pageIds, componentById);
 
   const ownerIds = new Set([...pageIds, ...componentIds]);
   const interactions = arrayAt(document.interactions, '/interactions').map((interaction, index) =>
-    validateInteraction(interaction, index, seenIds, ownerIds, pageIds, componentIds, variableById)
+    validateInteraction(interaction, index, seenIds, ownerIds, pageIds, componentIds, componentById, variableById)
   );
 
   return {
@@ -88,20 +91,80 @@ function validateComponent(input: unknown, index: number, seenIds: Set<string>):
     fail('FORMAT_INVALID_FIELD', `${path}/type`, `Unsupported component type '${type}'.`);
   }
 
-  if (component.text !== undefined && typeof component.text !== 'string') {
-    fail('FORMAT_INVALID_FIELD', `${path}/text`, 'Component text must be a string.');
+  validateOptionalString(component.text, `${path}/text`);
+  validateOptionalBoolean(component.visible, `${path}/visible`);
+  validateOptionalString(component.name, `${path}/name`);
+  validateOptionalString(component.parentComponentId, `${path}/parentComponentId`);
+  validateOptionalString(component.panelStateId, `${path}/panelStateId`);
+  validateOptionalString(component.initialPanelStateId, `${path}/initialPanelStateId`);
+  validateOptionalString(component.ariaLabel, `${path}/ariaLabel`);
+  validateOptionalString(component.altText, `${path}/altText`);
+  validateOptionalString(component.value, `${path}/value`, true);
+
+  const panelStates = component.panelStates === undefined ? undefined : validatePanelStates(component.panelStates, `${path}/panelStates`);
+  if (type === 'dynamicPanel' && (!panelStates || panelStates.length === 0)) {
+    fail('FORMAT_INVALID_PANEL_STATE', `${path}/panelStates`, 'A dynamic panel requires at least one panel state.');
   }
-  if (component.visible !== undefined && typeof component.visible !== 'boolean') {
-    fail('FORMAT_INVALID_FIELD', `${path}/visible`, 'Component visibility must be a Boolean.');
+  if (type !== 'dynamicPanel' && (panelStates !== undefined || component.initialPanelStateId !== undefined)) {
+    fail('FORMAT_INVALID_PANEL_STATE', path, 'Only dynamic panels can declare panel states.');
   }
+
+  const bounds = component.bounds === undefined ? undefined : validateBounds(component.bounds, `${path}/bounds`);
+  const style = component.style === undefined ? undefined : validateStyle(component.style, `${path}/style`);
 
   return {
     id,
     pageId,
     type: type as Component['type'],
     ...(component.text === undefined ? {} : { text: component.text as string }),
-    ...(component.visible === undefined ? {} : { visible: component.visible as boolean })
+    ...(component.visible === undefined ? {} : { visible: component.visible as boolean }),
+    ...(component.name === undefined ? {} : { name: component.name as string }),
+    ...(component.parentComponentId === undefined ? {} : { parentComponentId: component.parentComponentId as string }),
+    ...(component.panelStateId === undefined ? {} : { panelStateId: component.panelStateId as string }),
+    ...(panelStates === undefined ? {} : { panelStates }),
+    ...(component.initialPanelStateId === undefined ? {} : { initialPanelStateId: component.initialPanelStateId as string }),
+    ...(bounds === undefined ? {} : { bounds }),
+    ...(style === undefined ? {} : { style }),
+    ...(component.ariaLabel === undefined ? {} : { ariaLabel: component.ariaLabel as string }),
+    ...(component.altText === undefined ? {} : { altText: component.altText as string }),
+    ...(component.value === undefined ? {} : { value: component.value as string })
   };
+}
+
+function validateComponentRelationships(
+  components: Component[],
+  pageIds: Set<string>,
+  componentById: Map<string, Component>
+): void {
+  for (const [index, component] of components.entries()) {
+    const path = `/components/${index}`;
+    if (!pageIds.has(component.pageId)) {
+      fail('FORMAT_UNKNOWN_PAGE', `${path}/pageId`, `Component page '${component.pageId}' does not exist.`);
+    }
+    if (component.parentComponentId !== undefined) {
+      const parent = componentById.get(component.parentComponentId);
+      if (!parent) {
+        fail('FORMAT_UNKNOWN_COMPONENT', `${path}/parentComponentId`, `Parent component '${component.parentComponentId}' does not exist.`);
+      }
+      if (parent.pageId !== component.pageId) {
+        fail('FORMAT_INVALID_FIELD', `${path}/parentComponentId`, 'A component parent must belong to the same page.');
+      }
+    }
+    if (component.panelStateId !== undefined) {
+      const parent = component.parentComponentId === undefined ? undefined : componentById.get(component.parentComponentId);
+      if (!parent || parent.type !== 'dynamicPanel') {
+        fail('FORMAT_INVALID_PANEL_STATE', `${path}/panelStateId`, 'A panel-state child requires an immediate dynamic-panel parent.');
+      }
+      if (!parent.panelStates?.some((state) => state.id === component.panelStateId)) {
+        fail('FORMAT_UNKNOWN_PANEL_STATE', `${path}/panelStateId`, `Panel state '${component.panelStateId}' does not exist on parent '${parent.id}'.`);
+      }
+    }
+    if (component.type === 'dynamicPanel' && component.initialPanelStateId !== undefined) {
+      if (!component.panelStates?.some((state) => state.id === component.initialPanelStateId)) {
+        fail('FORMAT_UNKNOWN_PANEL_STATE', `${path}/initialPanelStateId`, `Initial panel state '${component.initialPanelStateId}' does not exist.`);
+      }
+    }
+  }
 }
 
 function validateVariable(input: unknown, index: number, seenIds: Set<string>): Variable {
@@ -125,6 +188,7 @@ function validateInteraction(
   ownerIds: Set<string>,
   pageIds: Set<string>,
   componentIds: Set<string>,
+  componentById: Map<string, Component>,
   variableById: Map<string, Variable>
 ): Interaction {
   const path = `/interactions/${index}`;
@@ -136,7 +200,7 @@ function validateInteraction(
   }
   const event = stringAt(interaction.event, `${path}/event`);
   const branches = arrayAt(interaction.branches, `${path}/branches`).map((branch, branchIndex) =>
-    validateBranch(branch, `${path}/branches/${branchIndex}`, seenIds, ownerIds, pageIds, componentIds, variableById)
+    validateBranch(branch, `${path}/branches/${branchIndex}`, seenIds, ownerIds, pageIds, componentIds, componentById, variableById)
   );
   return { id, ownerId, event, branches };
 }
@@ -148,6 +212,7 @@ function validateBranch(
   ownerIds: Set<string>,
   pageIds: Set<string>,
   componentIds: Set<string>,
+  componentById: Map<string, Component>,
   variableById: Map<string, Variable>
 ): Branch {
   const branch = recordAt(input, path);
@@ -157,7 +222,7 @@ function validateBranch(
   }
   const condition = validateCondition(branch.condition, `${path}/condition`, variableById);
   const actions = arrayAt(branch.actions, `${path}/actions`).map((action, actionIndex) =>
-    validateAction(action, `${path}/actions/${actionIndex}`, seenIds, ownerIds, pageIds, componentIds, variableById)
+    validateAction(action, `${path}/actions/${actionIndex}`, seenIds, ownerIds, pageIds, componentIds, componentById, variableById)
   );
   return { id, enabled: branch.enabled, condition, actions };
 }
@@ -194,6 +259,7 @@ function validateAction(
   ownerIds: Set<string>,
   pageIds: Set<string>,
   componentIds: Set<string>,
+  componentById: Map<string, Component>,
   variableById: Map<string, Variable>
 ): Action {
   const action = recordAt(input, path);
@@ -235,6 +301,19 @@ function validateAction(
     return { id, type, componentId, visible: action.visible };
   }
 
+  if (type === 'setPanelState') {
+    const componentId = requireComponent(action.componentId, `${path}/componentId`, componentIds);
+    const component = componentById.get(componentId)!;
+    if (component.type !== 'dynamicPanel') {
+      fail('FORMAT_INVALID_PANEL_STATE', `${path}/componentId`, `Component '${componentId}' is not a dynamic panel.`);
+    }
+    const stateId = stringAt(action.stateId, `${path}/stateId`);
+    if (!component.panelStates?.some((state) => state.id === stateId)) {
+      fail('FORMAT_UNKNOWN_PANEL_STATE', `${path}/stateId`, `Panel state '${stateId}' does not exist on '${componentId}'.`);
+    }
+    return { id, type, componentId, stateId };
+  }
+
   if (type === 'emit') {
     const ownerId = stringAt(action.ownerId, `${path}/ownerId`);
     if (!ownerIds.has(ownerId)) {
@@ -245,6 +324,64 @@ function validateAction(
   }
 
   fail('FORMAT_UNSUPPORTED_ACTION', `${path}/type`, `Unsupported action type '${type}'.`);
+}
+
+function validatePanelStates(input: unknown, path: string): PanelState[] {
+  const seen = new Set<string>();
+  return arrayAt(input, path).map((state, index) => {
+    const statePath = `${path}/${index}`;
+    const record = recordAt(state, statePath);
+    const id = stringAt(record.id, `${statePath}/id`);
+    if (seen.has(id)) {
+      fail('FORMAT_DUPLICATE_ID', `${statePath}/id`, `Panel state '${id}' is duplicated.`);
+    }
+    seen.add(id);
+    return { id, name: stringAt(record.name, `${statePath}/name`) };
+  });
+}
+
+function validateBounds(input: unknown, path: string): ComponentBounds {
+  const bounds = recordAt(input, path);
+  const x = finiteNumberAt(bounds.x, `${path}/x`, false);
+  const y = finiteNumberAt(bounds.y, `${path}/y`, false);
+  const width = finiteNumberAt(bounds.width, `${path}/width`, true);
+  const height = finiteNumberAt(bounds.height, `${path}/height`, true);
+  return { x, y, width, height };
+}
+
+function validateStyle(input: unknown, path: string): ComponentStyle {
+  const style = recordAt(input, path);
+  for (const key of Object.keys(style)) {
+    if (!styleKeys.has(key)) {
+      fail('FORMAT_INVALID_FIELD', `${path}/${key}`, `Style property '${key}' is not supported.`);
+    }
+  }
+  const result: ComponentStyle = {};
+  for (const key of ['backgroundColor', 'borderColor', 'color'] as const) {
+    if (style[key] !== undefined) {
+      result[key] = safeColorAt(style[key], `${path}/${key}`);
+    }
+  }
+  for (const key of ['borderRadius', 'fontSize', 'padding'] as const) {
+    if (style[key] !== undefined) {
+      result[key] = finiteNumberAt(style[key], `${path}/${key}`, false);
+    }
+  }
+  if (style.fontWeight !== undefined) {
+    const fontWeight = stringAt(style.fontWeight, `${path}/fontWeight`);
+    if (!fontWeights.has(fontWeight)) {
+      fail('FORMAT_INVALID_FIELD', `${path}/fontWeight`, `Unsupported font weight '${fontWeight}'.`);
+    }
+    result.fontWeight = fontWeight as Exclude<ComponentStyle['fontWeight'], undefined>;
+  }
+  if (style.textAlign !== undefined) {
+    const textAlign = stringAt(style.textAlign, `${path}/textAlign`);
+    if (!textAlignments.has(textAlign)) {
+      fail('FORMAT_INVALID_FIELD', `${path}/textAlign`, `Unsupported text alignment '${textAlign}'.`);
+    }
+    result.textAlign = textAlign as Exclude<ComponentStyle['textAlign'], undefined>;
+  }
+  return result;
 }
 
 function requireVariable(variableId: string, path: string, variables: Map<string, Variable>): Variable {
@@ -291,6 +428,35 @@ function stringAt(value: unknown, path: string): string {
     fail('FORMAT_INVALID_FIELD', path, 'Expected a nonempty string.');
   }
   return value;
+}
+
+function finiteNumberAt(value: unknown, path: string, positive: boolean): number {
+  if (typeof value !== 'number' || !Number.isFinite(value) || (positive ? value <= 0 : value < 0)) {
+    fail('FORMAT_INVALID_FIELD', path, positive ? 'Expected a positive finite number.' : 'Expected a nonnegative finite number.');
+  }
+  return value;
+}
+
+function safeColorAt(value: unknown, path: string): string {
+  const color = stringAt(value, path);
+  if (!/^#[0-9a-fA-F]{3,8}$|^[a-zA-Z]+$/.test(color)) {
+    fail('FORMAT_INVALID_FIELD', path, 'Expected a simple named or hexadecimal color token.');
+  }
+  return color;
+}
+
+function validateOptionalString(value: unknown, path: string, allowEmpty = false): void {
+  if (value !== undefined) {
+    if (typeof value !== 'string' || (!allowEmpty && value.length === 0)) {
+      fail('FORMAT_INVALID_FIELD', path, allowEmpty ? 'Expected a string.' : 'Expected a nonempty string.');
+    }
+  }
+}
+
+function validateOptionalBoolean(value: unknown, path: string): void {
+  if (value !== undefined && typeof value !== 'boolean') {
+    fail('FORMAT_INVALID_FIELD', path, 'Expected a Boolean.');
+  }
 }
 
 function assertNonEmptyString(value: unknown, path: string): void {

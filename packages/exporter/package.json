@@ -1,0 +1,24 @@
+{
+  "name": "@mockupfx/exporter",
+  "version": "0.1.0",
+  "description": "Offline static, CSV, and DOCX export generators for MockupFX projects",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "dependencies": {
+    "@mockupfx/format": "workspace:*",
+    "@mockupfx/renderer": "workspace:*",
+    "@mockupfx/runtime": "workspace:*",
+    "esbuild": "^0.28.2",
+    "jszip": "^3.10.1"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json"
+  }
+}

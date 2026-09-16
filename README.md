@@ -2,7 +2,7 @@
 
 **MockupFX** is a documentation-first, open-source proposal for a browser-based UX prototyping, review, and developer-handoff platform. It is designed to make interactive mockups portable, inspectable, shareable, and self-hostable without requiring a proprietary project format or hosted service.
 
-> **Status:** The repository now includes a tested TypeScript foundation: a project-format validator, a deterministic interactive preview player core, an open reference fixture, and a built-in self-test. It does **not** yet ship an editor, visual renderer, static exporter, hosted service, or production API.
+> **Status:** The repository now includes a tested TypeScript foundation: project-format validation, deterministic interactive playback, an accessible HTML preview renderer, offline static bundle generation, CSV inventory reports, structural DOCX handoff reports, advanced public fixtures, and a built-in self-test. It does **not** yet ship an authoring editor, responsive layout engine, PDF/Markdown/image exports, hosted service, or production API.
 
 ## Product scope
 
@@ -33,8 +33,10 @@ The complete requirements and acceptance criteria are in [Product Requirements](
 | [User Documentation Plan](docs/product/USER-DOCUMENTATION-PLAN.md) | End-user documentation required before releases |
 | [Architecture](docs/architecture/ARCHITECTURE.md) | Target system design, open project format, and trust boundaries |
 | [Interactive Preview Player Engine](docs/architecture/INTERACTIVE-PREVIEW-PLAYER-ENGINE.md) | Normative runtime contract for event execution, state, trace, URL state, security, and acceptance criteria |
+| [Renderer and Exporter Architecture](docs/architecture/RENDERER-AND-EXPORTER.md) | Normative contract for HTML preview, panel-state rendering, offline packages, CSV, DOCX, and fixture compatibility |
 | [Implementation Plan](docs/developer/IMPLEMENTATION-PLAN.md) | Module map, milestones, interfaces, and test strategy |
 | [Player Engine Implementation Plan](docs/developer/PLAYER-ENGINE-IMPLEMENTATION-PLAN.md) | Initial monorepo structure, test-first build order, task plan, and verification gates |
+| [Renderer and Exporter Implementation Plan](docs/developer/RENDERER-EXPORTER-IMPLEMENTATION-PLAN.md) | Test-first package implementation sequence and artifact-validation requirements |
 | [Self-Hosting Guide](docs/operations/SELF-HOSTING.md) | Reference operations model, configuration, backup, and upgrades |
 | [Roadmap](docs/governance/ROADMAP.md) | Release sequence and contribution priorities |
 | [Contributing Guide](CONTRIBUTING.md) | Participation, issue, review, and pull-request process |
@@ -60,7 +62,7 @@ pnpm self-test
 pnpm validate:docs
 ```
 
-The self-test executes the open checkout fixture through the compiled `@mockupfx/runtime` package. It verifies a conditional click interaction, variable update, page navigation, FIFO named-event emission, component visibility update, and deterministic trace. Read the [player engine specification](docs/architecture/INTERACTIVE-PREVIEW-PLAYER-ENGINE.md) before contributing runtime behavior. Follow [Contributing](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md) when participating.
+The self-test executes checkout and complex-dashboard fixtures through the compiled packages. It verifies conditional click behavior, variables, page navigation, FIFO emitted events, visibility, dynamic-panel state, master-view text updates, an offline static package, safe CSV inventories, and a structurally valid DOCX report. Read the [renderer and exporter specification](docs/architecture/RENDERER-AND-EXPORTER.md) before contributing preview or publication behavior. Follow [Contributing](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md) when participating.
 
 ## References
 

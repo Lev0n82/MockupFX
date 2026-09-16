@@ -1,0 +1,25 @@
+{
+  "name": "@mockupfx/renderer",
+  "version": "0.1.0",
+  "description": "Accessible HTML preview renderer for the MockupFX player engine",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./browser": {
+      "types": "./dist/browser-entry.d.ts",
+      "import": "./dist/browser-entry.js"
+    }
+  },
+  "files": ["dist"],
+  "dependencies": {
+    "@mockupfx/format": "workspace:*",
+    "@mockupfx/runtime": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json"
+  }
+}

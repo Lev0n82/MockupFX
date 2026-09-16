@@ -44,3 +44,35 @@
   - Acceptance: All documented checks are green and the repository is clean after commit.
   - Verify: `pnpm validate:docs && pnpm test && pnpm typecheck && pnpm build && pnpm self-test && git diff --check`.
   - Files: release/status documentation only if required.
+
+## Renderer, Exporter, and Advanced Fixture Delivery
+
+- [x] **R0 — Document renderer/exporter architecture and plan**
+  - Acceptance: The package boundary, data extension, public contracts, multi-level criteria, test strategy, and security/accessibility constraints are documented before source changes.
+  - Verify: `pnpm validate:docs` resolves all new documentation links.
+  - Files: `docs/architecture/RENDERER-AND-EXPORTER.md`, `docs/developer/RENDERER-EXPORTER-IMPLEMENTATION-PLAN.md`, `tasks/todo.md`.
+
+- [x] **R1 — Extend the validated format and runtime panel-state contract**
+  - Acceptance: Dynamic panels, master metadata, layout/style primitives, and `setPanelState` work without breaking the original project format.
+  - Verify: `pnpm test:format && pnpm test:runtime && pnpm typecheck`.
+  - Files: format/runtime types, validation, action, tests.
+
+- [x] **R2 — Create complex public fixture coverage**
+  - Acceptance: A dashboard fixture includes nested controls, dynamic panels, and a multi-state master view with expected runtime journeys.
+  - Verify: focused runtime journey test and format validation.
+  - Files: `packages/test-fixtures/src/*`, fixture tests.
+
+- [x] **R3 — Implement the HTML preview renderer**
+  - Acceptance: Safe deterministic HTML reflects effective state and the mount adapter delegates activation to the engine.
+  - Verify: `pnpm test:renderer && pnpm typecheck`.
+  - Files: `packages/renderer/src/*`, renderer tests.
+
+- [x] **R4 — Implement static, CSV, and DOCX exporters**
+  - Acceptance: Offline package, manifest, CSV data dictionary, and structurally valid DOCX report are generated from one project source.
+  - Verify: `pnpm test:exporter && pnpm build`.
+  - Files: `packages/exporter/src/*`, exporter tests.
+
+- [x] **R5 — Expand self-test, validate, and publish**
+  - Acceptance: Root self-test proves all journeys and export artifacts; all repository checks pass before push.
+  - Verify: `pnpm test && pnpm typecheck && pnpm build && pnpm self-test && pnpm validate:docs && git diff --check`.
+  - Files: root self-test, README/index updates, release commit.

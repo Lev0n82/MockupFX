@@ -13,7 +13,9 @@
     "paths": {
       "@mockupfx/format": ["packages/format/src/index.ts"],
       "@mockupfx/runtime": ["packages/runtime/src/index.ts"],
-      "@mockupfx/test-fixtures": ["packages/test-fixtures/src/index.ts"]
+      "@mockupfx/test-fixtures": ["packages/test-fixtures/src/index.ts"],
+      "@mockupfx/renderer": ["packages/renderer/src/index.ts"],
+      "@mockupfx/exporter": ["packages/exporter/src/index.ts"]
     }
   },
   "include": ["packages/*/src/**/*.ts", "packages/*/tests/**/*.ts", "vitest.config.ts"]

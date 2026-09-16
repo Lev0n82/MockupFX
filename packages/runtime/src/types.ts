@@ -10,6 +10,7 @@ export interface RuntimeSnapshot {
 export interface ComponentOverride {
   text?: string;
   visible?: boolean;
+  panelStateId?: string;
 }
 
 export interface DispatchEvent {
@@ -59,6 +60,7 @@ export type RuntimeErrorCode =
   | 'RUNTIME_UNKNOWN_PAGE'
   | 'RUNTIME_UNKNOWN_COMPONENT'
   | 'RUNTIME_UNKNOWN_VARIABLE'
+  | 'RUNTIME_UNKNOWN_PANEL_STATE'
   | 'RUNTIME_TYPE_MISMATCH'
   | 'RUNTIME_INVALID_EVENT'
   | 'RUNTIME_INVALID_ACTION';

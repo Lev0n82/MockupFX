@@ -36,6 +36,23 @@ export function applyAction(action: Action, draft: RuntimeSnapshot, project: Pro
       draft.components[action.componentId] = { ...current, visible: action.visible };
       return {};
     }
+    case 'setPanelState': {
+      const panel = requireComponentRecord(action.componentId, project);
+      if (panel.type !== 'dynamicPanel') {
+        throw new RuntimeError('RUNTIME_INVALID_ACTION', `Component '${action.componentId}' is not a dynamic panel.`, {
+          componentId: action.componentId
+        });
+      }
+      if (!panel.panelStates?.some((state) => state.id === action.stateId)) {
+        throw new RuntimeError('RUNTIME_UNKNOWN_PANEL_STATE', `Panel state '${action.stateId}' does not exist.`, {
+          componentId: action.componentId,
+          stateId: action.stateId
+        });
+      }
+      const current = draft.components[action.componentId] ?? {};
+      draft.components[action.componentId] = { ...current, panelStateId: action.stateId };
+      return {};
+    }
     case 'emit': {
       if (action.ownerId.length === 0 || action.event.length === 0) {
         throw new RuntimeError('RUNTIME_INVALID_EVENT', 'An emitted event requires a nonempty owner and name.', {
@@ -55,9 +72,15 @@ function requirePage(pageId: string, project: ProjectDocument): void {
 }
 
 function requireComponent(componentId: string, project: ProjectDocument): void {
-  if (!project.components.some((component) => component.id === componentId)) {
+  requireComponentRecord(componentId, project);
+}
+
+function requireComponentRecord(componentId: string, project: ProjectDocument): ProjectDocument['components'][number] {
+  const component = project.components.find((candidate) => candidate.id === componentId);
+  if (!component) {
     throw new RuntimeError('RUNTIME_UNKNOWN_COMPONENT', `Component '${componentId}' does not exist.`, { componentId });
   }
+  return component;
 }
 
 function requireVariable(variableId: string, project: ProjectDocument): Variable {

@@ -14,11 +14,13 @@ This documentation set is the initial source of truth for MockupFX. It defines a
 | 6 | [Publishing and Export Formats](product/EXPORT-FORMATS.md) | Designing static web, open JSON, CSV, Word, PDF, Markdown, image, or asset outputs |
 | 7 | [Architecture](architecture/ARCHITECTURE.md) | Designing the project model, runtime, backend, API, or export format |
 | 8 | [Interactive Preview Player Engine](architecture/INTERACTIVE-PREVIEW-PLAYER-ENGINE.md) | Implementing or reviewing deterministic preview runtime behavior and host boundaries |
-| 9 | [Implementation Plan](developer/IMPLEMENTATION-PLAN.md) | Starting development, selecting a module, or creating a milestone issue |
-| 10 | [Player Engine Implementation Plan](developer/PLAYER-ENGINE-IMPLEMENTATION-PLAN.md) | Reviewing initial monorepo structure, test-first runtime tasks, and verification gates |
-| 11 | [Self-Hosting Guide](operations/SELF-HOSTING.md) | Designing deployment, data protection, administration, or operations |
-| 12 | [User Documentation Plan](product/USER-DOCUMENTATION-PLAN.md) | Writing tutorials, reference pages, onboarding, or release documentation |
-| 13 | [Roadmap](governance/ROADMAP.md) | Understanding phases, dependencies, and the next contribution areas |
+| 9 | [Renderer and Exporter Architecture](architecture/RENDERER-AND-EXPORTER.md) | Implementing HTML preview, offline packages, CSV, DOCX, or advanced fixture behavior |
+| 10 | [Implementation Plan](developer/IMPLEMENTATION-PLAN.md) | Starting development, selecting a module, or creating a milestone issue |
+| 11 | [Player Engine Implementation Plan](developer/PLAYER-ENGINE-IMPLEMENTATION-PLAN.md) | Reviewing initial monorepo structure, test-first runtime tasks, and verification gates |
+| 12 | [Renderer and Exporter Implementation Plan](developer/RENDERER-EXPORTER-IMPLEMENTATION-PLAN.md) | Reviewing test-first renderer/exporter build order and release evidence |
+| 13 | [Self-Hosting Guide](operations/SELF-HOSTING.md) | Designing deployment, data protection, administration, or operations |
+| 14 | [User Documentation Plan](product/USER-DOCUMENTATION-PLAN.md) | Writing tutorials, reference pages, onboarding, or release documentation |
+| 15 | [Roadmap](governance/ROADMAP.md) | Understanding phases, dependencies, and the next contribution areas |
 
 Repository-wide policies are available in [Contributing](../CONTRIBUTING.md), [Security](../SECURITY.md), [Governance](../GOVERNANCE.md), and the [Code of Conduct](../CODE_OF_CONDUCT.md).
 
